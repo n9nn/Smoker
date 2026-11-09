@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YourName</title>
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{color-scheme:dark;--h:72px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#000;color:#fff;font-family:'Cairo',system-ui,"Segoe UI",Tahoma,Arial,sans-serif;
+    line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit}
+  :focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+  /* header */
+  .bar{position:sticky;top:0;z-index:50;height:var(--h);background:#000;border-bottom:1px solid #1a1a1a}
+  .bar .in{max-width:960px;height:100%;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .logo{font-weight:900;font-size:1.1rem}
+  .right{display:flex;align-items:center;gap:10px}
+  .pill{background:transparent;color:#fff;border:1px solid #2a2a2a;border-radius:99px;height:38px;padding:0 16px;
+    font-weight:600;font-size:.9rem;cursor:pointer;transition:border-color .2s}
+  .pill:hover{border-color:#fff}
+  .burger{width:44px;height:44px;background:transparent;border:1px solid #2a2a2a;border-radius:12px;cursor:pointer;
+    display:grid;place-items:center;transition:border-color .2s}
+  .burger:hover{border-color:#fff}
+  .burger span{display:block;width:20px;height:2px;background:#fff;border-radius:2px;grid-area:1/1;
+    transition:transform .3s,opacity .2s}
+  .burger{position:relative}
+  .burger span:nth-child(1){transform:translateY(-6px)}
+  .burger span:nth-child(3){transform:translateY(6px)}
+  .burger.open span:nth-child(1){transform:rotate(45deg)}
+  .burger.open span:nth-child(2){opacity:0}
+  .burger.open span:nth-child(3){transform:rotate(-45deg)}
+
+  /* menu overlay */
+  .menu{position:fixed;inset:var(--h) 0 0 0;z-index:40;background:#000;padding:36px 22px;
+    display:flex;flex-direction:column;justify-content:center;
+    opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+  .menu.open{opacity:1;visibility:visible}
+  .menu a{display:block;padding:14px 0;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:800;color:#8a8a8a;
+    border-bottom:1px solid #151515;transition:color .2s,padding .2s}
+  .menu a:hover,.menu a.on{color:#fff}
+  .menu a.on{padding-inline-start:12px;border-inline-start:3px solid #fff}
+  .menu-foot{margin-top:28px;color:#5e5e5e;font-size:.9rem}
+
+  /* pages */
+  .wrap{max-width:900px;margin:0 auto;padding:56px 22px 72px}
+  .page{display:none;animation:fade .35s ease both}
+  .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  h1.big{font-size:clamp(2.2rem,8vw,4rem);font-weight:900;line-height:1.2;margin-bottom:16px}
+  h1.big em{font-style:normal;color:#7a7a7a}
+  .lead{color:#8a8a8a;font-size:1.1rem;max-width:560px;margin-bottom:34px}
+  h2.title{font-size:2rem;font-weight:900;margin-bottom:8px}
+  .sub{color:#8a8a8a;margin-bottom:36px}
+  .label{font-size:.95rem;font-weight:700;color:#6b6b6b;padding-bottom:12px;border-bottom:1px solid #1a1a1a;margin:56px 0 24px}
+  .muted{color:#5e5e5e}
+
+  .actions{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 28px;border-radius:99px;
+    font-weight:700;background:#fff;color:#000;border:1px solid #fff;transition:background .2s,transform .2s;cursor:pointer}
+  .btn:hover{background:#d6d6d6;border-color:#d6d6d6;transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:#fff;border-color:#2a2a2a}
+  .btn.ghost:hover{border-color:#fff;background:transparent}
+
+  /* cards */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .card{display:flex;flex-direction:column;gap:18px;background:#0a0a0a;border:1px solid #1e1e1e;border-radius:20px;
+    padding:26px;transition:border-color .2s,transform .2s}
+  a.card:hover{border-color:#fff;transform:translateY(-3px)}
+  .gname{font-size:1.45rem;font-weight:800;line-height:1.3}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;flex:1;align-content:flex-start}
+  .tags span{font-size:.8rem;color:#bdbdbd;border:1px solid #2a2a2a;border-radius:99px;padding:2px 12px}
+  .go{font-size:.9rem;font-weight:700;border-top:1px solid #1e1e1e;padding-top:14px}
+  .card p{color:#8a8a8a}
+
+  .plan ul{list-style:none;display:grid;gap:8px;flex:1}
+  .plan li{color:#bdbdbd}
+  .plan li::before{content:"✓";color:#fff;font-weight:900;margin-inline-end:10px}
+  .price{font-size:2.2rem;font-weight:900;line-height:1.1}
+  .price small{font-size:.9rem;color:#8a8a8a;font-weight:600;margin-inline-start:4px}
+
+  .row{display:grid;grid-template-columns:110px 1fr;gap:18px;padding:22px 0;border-bottom:1px solid #151515}
+  .row time{color:#6b6b6b;font-weight:600;direction:ltr;text-align:start;font-variant-numeric:tabular-nums}
+  .row b{font-size:1.1rem}
+  .row p{color:#8a8a8a}
+  @media(max-width:560px){ .row{grid-template-columns:1fr;gap:6px} }
+
+  .steps{list-style:none;counter-reset:s;display:grid;gap:14px;margin-bottom:32px}
+  .steps li{counter-increment:s;display:flex;gap:14px;align-items:flex-start;color:#bdbdbd}
+  .steps li::before{content:counter(s);flex:none;width:30px;height:30px;border-radius:50%;background:#fff;color:#000;
+    font-weight:800;display:grid;place-items:center;font-size:.9rem}
+  .tagbox{display:inline-flex;align-items:center;gap:12px;border:1px solid #2a2a2a;border-radius:99px;
+    padding:6px 6px 6px 20px;margin-bottom:26px;direction:ltr;font-weight:700}
+  .tagbox button{background:#fff;color:#000;border:0;border-radius:99px;padding:7px 16px;font-weight:700;cursor:pointer}
+
+  .note{margin-top:56px;color:#5e5e5e;font-size:.85rem;border-inline-start:2px solid #2a2a2a;padding-inline-start:14px}
+  footer{padding:24px 0 40px;border-top:1px solid #1a1a1a;color:#5e5e5e;font-size:.85rem;text-align:center}
+
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="in">
+    <a class="logo" href="#home" id="logo"></a>
+    <div class="right">
+      <button class="pill" id="langBtn" type="button"></button>
+      <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="menu" id="menu" aria-hidden="true">
+  <a href="#home" data-nav="home" data-t="home"></a>
+  <a href="#prices" data-nav="prices" data-t="prices"></a>
+  <a href="#offers" data-nav="offers" data-t="offers"></a>
+  <a href="#updates" data-nav="updates" data-t="updates"></a>
+  <a href="#contact" data-nav="contact" data-t="contact"></a>
+  <div class="menu-foot" id="menuFoot"></div>
+</nav>
+
+<main class="wrap">
+
+  <!-- الرئيسية -->
+  <section class="page" id="home">
+    <h1 class="big" id="title"></h1>
+    <p class="lead" data-t="intro"></p>
+    <div class="actions">
+      <a class="btn dc" href="#" target="_blank" rel="noopener" data-t="btn"></a>
+      <a class="btn ghost" href="#contact" data-t="see_contact"></a>
+    </div>
+    <h2 class="label" data-t="games_t"></h2>
+    <div class="grid" id="homeGames"></div>
+  </section>
+
+  <!-- الأسعار -->
+  <section class="page" id="prices">
+    <h2 class="title" data-t="prices_t"></h2>
+    <p class="sub" data-t="prices_sub"></p>
+    <div class="grid" id="plans"></div>
+  </section>
+
+  <!-- العروض -->
+  <section class="page" id="offers">
+    <h2 class="title" data-t="offers_t"></h2>
+    <p class="sub" data-t="offers_sub"></p>
+    <div class="grid" id="offersList"></div>
+  </section>
+
+  <!-- التحديثات -->
+  <section class="page" id="updates">
+    <h2 class="title" data-t="updates_t"></h2>
+    <p class="sub" data-t="updates_sub"></p>
+    <div id="updatesList"></div>
+  </section>
+
+  <!-- تواصل -->
+  <section class="page" id="contact">
+    <h2 class="title" data-t="contact_t"></h2>
+    <p class="sub" data-t="contact_sub"></p>
+    <ol class="steps">
+      <li data-t="s1"></li>
+      <li data-t="s2"></li>
+      <li data-t="s3"></li>
+    </ol>
+    <div class="tagbox"><span id="tag"></span><button id="copyBtn" type="button"></button></div>
+    <div class="actions">
+      <a class="btn dc" href="#" target="_blank" rel="noopener" data-t="btn"></a>
+      <a class="btn ghost" id="serverLink2" href="#" target="_blank" rel="noopener" data-t="server"></a>
+    </div>
+  </section>
+
+  <p class="note" data-t="note"></p>
+</main>
+
+<footer id="foot"></footer>
+
+<script>
+  /* ============ ✏️ عدّل هنا / EDIT HERE ============ */
+  var NAME        = "YourName";
+  var PROFILE     = "https://discord.com/users/YOUR_USER_ID";   // رابط حسابك الشخصي
+  var DISCORD     = "https://discord.gg/YOUR_INVITE_CODE";      // رابط السيرفر
+  var DISCORD_TAG = "yourname";                                 // يوزرك بالديسكورد
+
+  // الميزات: اكتب بس اللي منتجك يسويه فعلاً
+  var F = {
+    esp:     { en: "ESP",                   ar: "كشف الأماكن" },
+    aim:     { en: "Aimbot",                ar: "إيم بوت" },
+    trig:    { en: "Triggerbot",            ar: "ترقر بوت" },
+    radar:   { en: "Radar",                 ar: "رادار" },
+    recoil:  { en: "Recoil Control",        ar: "تحكم بالارتداد" },
+    bhop:    { en: "Bunny Hop",             ar: "بني هوب" },
+    noflash: { en: "No Flash",              ar: "بدون تعمية" },
+    skins:   { en: "Skin Changer",          ar: "تغيير السكنات" },
+    tracker: { en: "Cooldown Tracker",      ar: "تتبع الكولداون" },
+    autouse: { en: "Auto Item Use",         ar: "استخدام تلقائي للعناصر" },
+    lasthit: { en: "Auto Last Hit",         ar: "لاست هت تلقائي" },
+    skill:   { en: "Skillshot Prediction",  ar: "توقع المهارات" },
+    stab:    { en: "Auto Backstab",         ar: "باك ستاب تلقائي" },
+    blast:   { en: "Auto Airblast",         ar: "إيربلاست تلقائي" },
+    predict: { en: "Projectile Prediction", ar: "توقع المقذوفات" }
+  };
+
+  var GAMES = [
+    { name: "Valorant", feats: ["esp", "aim", "trig", "radar", "recoil"] },
+    { name: "CS2",      feats: ["esp", "aim", "trig", "radar", "recoil", "bhop", "noflash", "skins"] },
+    { name: "Dota 2",   feats: ["esp", "tracker", "autouse", "lasthit", "skill"] },
+    { name: "TF2",      feats: ["esp", "aim", "trig", "bhop", "stab", "blast", "predict"] }
+  ];
+
+  // الأسعار: غيّر الباقات والأسعار والمميزات
+  var PLANS = [
+    { name:{ar:"الأساسي", en:"Basic"}, price:"$10", period:{ar:"/ شهر", en:"/ month"},
+      items:{ ar:["لعبة واحدة","تحديثات مجانية","دعم بالديسكورد"], en:["One game","Free updates","Discord support"] } },
+    { name:{ar:"الاحترافي", en:"Pro"}, price:"$25", period:{ar:"/ شهر", en:"/ month"},
+      items:{ ar:["كل الألعاب","تحديثات مجانية","دعم أولوية"], en:["All games","Free updates","Priority support"] } },
+    { name:{ar:"مدى الحياة", en:"Lifetime"}, price:"$60", period:{ar:"/ مرة", en:"/ once"},
+      items:{ ar:["كل الألعاب للأبد","تحديثات مجانية","دعم أولوية"], en:["All games forever","Free updates","Priority support"] } }
+  ];
+
+  // العروض: احذفها كلها إذا ما عندك عروض حالياً (ستظهر رسالة "ما في عروض")
+  var OFFERS = [
+    { title:{ar:"عرض الافتتاح", en:"Opening offer"}, text:{ar:"خصم 20% على أول طلب.", en:"20% off your first order."}, until:"2026-12-31" }
+  ];
+
+  // التحديثات: أضف سطر جديد كل ما تحدّث شي (الأحدث فوق)
+  var UPDATES = [
+    { date:"2026-11-02", game:"Valorant", text:{ar:"إضافة ميزة جديدة وإصلاح مشكلة.", en:"Added a new feature and fixed a bug."} },
+    { date:"2026-10-20", game:"CS2",      text:{ar:"تحديث بعد آخر باتش.", en:"Updated after the latest patch."} }
+  ];
+  /* ================================================= */
+
+  var PAGES = ["home", "prices", "offers", "updates", "contact"];
+
+  var T = {
+    ar: {
+      home:"الرئيسية", prices:"الأسعار", offers:"العروض", updates:"التحديثات", contact:"تواصل",
+      title:"هلا، أني {n}.<br><em>أبرمج هاكات ألعاب.</em>",
+      intro:"مطور فردي. أبرمج كل شي بنفسي وأرد على كل رسالة بنفسي.",
+      btn:"راسلني على ديسكورد", server:"انضم للسيرفر", see_contact:"طرق التواصل",
+      games_t:"الألعاب", go:"راسلني للشراء",
+      prices_t:"الأسعار", prices_sub:"اختار الباقة وراسلني على ديسكورد.", buy:"اشتري الآن",
+      offers_t:"العروض", offers_sub:"عروض حالية.", until:"ينتهي:", noOffers:"ما في عروض حالياً.",
+      updates_t:"التحديثات", updates_sub:"آخر ما تحدّث.", noUpdates:"ما في تحديثات بعد.",
+      contact_t:"تواصل معي", contact_sub:"أسهل طريقة توصلني هي ديسكورد.",
+      s1:"ادخل الديسكورد وراسلني.", s2:"قلي أي باقة أو لعبة تريد.", s3:"بعد الدفع أرسللك التحميل وطريقة التشغيل.",
+      copy:"نسخ", copied:"تم النسخ ✓",
+      note:"الاستخدام على مسؤوليتك، وقد يؤدي لحظر الحساب.",
+      other:"English", menu_foot:"الاستخدام على مسؤوليتك"
+    },
+    en: {
+      home:"Home", prices:"Prices", offers:"Offers", updates:"Updates", contact:"Contact",
+      title:"Hi, I'm {n}.<br><em>I make game hacks.</em>",
+      intro:"Solo developer. I write everything myself and answer every message myself.",
+      btn:"Message me on Discord", server:"Join the server", see_contact:"Ways to reach me",
+      games_t:"Games", go:"Message me to buy",
+      prices_t:"Prices", prices_sub:"Pick a plan and message me on Discord.", buy:"Buy now",
+      offers_t:"Offers", offers_sub:"Current deals.", until:"Ends:", noOffers:"No offers right now.",
+      updates_t:"Updates", updates_sub:"What I've been updating.", noUpdates:"No updates yet.",
+      contact_t:"Contact me", contact_sub:"Discord is the easiest way to reach me.",
+      s1:"Join Discord and message me.", s2:"Tell me which plan or game you want.", s3:"After payment I send the download and setup steps.",
+      copy:"Copy", copied:"Copied ✓",
+      note:"Use at your own risk. It may get your account banned.",
+      other:"العربية", menu_foot:"Use at your own risk"
+    }
+  };
+
+  var d = document.documentElement, lang = "ar";
+  try { lang = localStorage.getItem("lang") || ((navigator.language || "").indexOf("ar") === 0 ? "ar" : "en"); } catch (e) {}
+  if (lang !== "ar" && lang !== "en") lang = "ar";
+
+  function $(id) { return document.getElementById(id); }
+  function currentPage() {
+    var h = (location.hash || "#home").slice(1);
+    return PAGES.indexOf(h) < 0 ? "home" : h;
+  }
+
+  /* ---------- render ---------- */
+  function renderAll(x) {
+    var t = T[x];
+    d.lang = x; d.dir = x === "ar" ? "rtl" : "ltr";
+
+    document.querySelectorAll("[data-t]").forEach(function (e) { e.textContent = t[e.dataset.t]; });
+    $("title").innerHTML = t.title.replace("{n}", NAME);
+    $("logo").textContent = NAME;
+    $("langBtn").textContent = t.other;
+    $("menuFoot").textContent = t.menu_foot;
+    $("copyBtn").textContent = t.copy;
+    $("tag").textContent = DISCORD_TAG;
+    $("foot").textContent = "© " + new Date().getFullYear() + " " + NAME;
+
+    $("homeGames").innerHTML = GAMES.map(function (g) {
+      var tags = g.feats.map(function (k) { return "<span>" + F[k][x] + "</span>"; }).join("");
+      return '<a class="card dc" href="' + PROFILE + '" target="_blank" rel="noopener">' +
+             '<div class="gname">' + g.name + '</div>' +
+             '<div class="tags">' + tags + '</div>' +
+             '<div class="go">' + t.go + '</div></a>';
+    }).join("");
+
+    $("plans").innerHTML = PLANS.map(function (p) {
+      return '<div class="card plan">' +
+             '<div class="gname">' + p.name[x] + '</div>' +
+             '<div class="price">' + p.price + '<small>' + p.period[x] + '</small></div>' +
+             '<ul>' + p.items[x].map(function (i) { return "<li>" + i + "</li>"; }).join("") + '</ul>' +
+             '<a class="btn dc" href="' + PROFILE + '" target="_blank" rel="noopener">' + t.buy + '</a></div>';
+    }).join("");
+
+    $("offersList").innerHTML = OFFERS.length ? OFFERS.map(function (o) {
+      return '<div class="card"><div class="gname">' + o.title[x] + '</div><p>' + o.text[x] + '</p>' +
+             '<div class="go">' + t.until + " " + o.until + '</div></div>';
+    }).join("") : '<p class="muted">' + t.noOffers + '</p>';
+
+    $("updatesList").innerHTML = UPDATES.length ? UPDATES.map(function (u) {
+      return '<div class="row"><time>' + u.date + '</time><div><b>' + u.game + '</b><p>' + u.text[x] + '</p></div></div>';
+    }).join("") : '<p class="muted">' + t.noUpdates + '</p>';
+
+    document.querySelectorAll("a.dc").forEach(function (a) { a.href = PROFILE; });
+    $("serverLink2").href = DISCORD;
+    document.title = NAME + " | " + t[currentPage()];
+  }
+
+  /* ---------- routing ---------- */
+  function setMenu(open) {
+    $("menu").classList.toggle("open", open);
+    $("menu").setAttribute("aria-hidden", open ? "false" : "true");
+    $("burger").classList.toggle("open", open);
+    $("burger").setAttribute("aria-expanded", open ? "true" : "false");
+    document.body.style.overflow = open ? "hidden" : "";
+  }
+
+  function route() {
+    var p = currentPage();
+    document.querySelectorAll(".page").forEach(function (s) { s.classList.toggle("active", s.id === p); });
+    document.querySelectorAll("[data-nav]").forEach(function (a) { a.classList.toggle("on", a.dataset.nav === p); });
+    document.title = NAME + " | " + T[lang][p];
+    setMenu(false);
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- events ---------- */
+  $("burger").addEventListener("click", function () {
+    setMenu(!$("menu").classList.contains("open"));
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
+  window.addEventListener("hashchange", route);
+
+  $("langBtn").addEventListener("click", function () {
+    lang = lang === "ar" ? "en" : "ar";
+    renderAll(lang);
+    document.title = NAME + " | " + T[lang][currentPage()];
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+  });
+  $("copyBtn").addEventListener("click", function () {
+    var b = $("copyBtn");
+    var done = function () {
+      b.textContent = T[lang].copied;
+      setTimeout(function () { b.textContent = T[lang].copy; }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(DISCORD_TAG).then(done, done);
+    } else { done(); }
+  });
+
+  /* ---------- start ---------- */
+  renderAll(lang);
+  route();
+</script>
+</body>
+</html>
